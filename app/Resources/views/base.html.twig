@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <link href='https://fonts.googleapis.com/css?family=Ubuntu:400,300,300italic,400italic,500,500italic,700,700italic' rel='stylesheet' type='text/css'>
+        <link href="/stylesheets/app.css" media="screen, projection" rel="stylesheet" type="text/css" />
+        <link href="/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" />
+        <!--[if IE]>
+        <link href="/stylesheets/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
+        <![endif]-->
+
+    </head>
+    <body>
+        <div class="container">
+            <div class="topbar">
+                <div class="left">
+                    <a href="{{ path('homepage') }}"><h1>Personal Reddit</h1></a>
+                </div>
+                <div class="right">
+                    <span>Ingelogd als: joostvdriel@gmail.com</span>
+                </div>
+            </div>
+            <div class="flashes"></div>
+            <div class="content">
+                <div class="posts">
+                    {% block body %}{% endblock %}
+                </div>
+
+                <div class="form">
+                {% if form is defined  %}
+                    {{ form_start(form, {'action' : path('post_new')}) }}
+                    <div class="form-group">
+                        {{ form_errors(form.url) }}
+                        {{ form_widget(form.url, { 'attr': {'class': 'input', 'placeholder': 'Url'} }) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_errors(form.title) }}
+                        {{ form_widget(form.title, { 'attr': {'class': 'input', 'placeholder': 'Title'} }) }}
+                    </div>
+                    <input type="submit" value="Post a new link" />
+                    {{ form_end(form) }}
+                {% endif %}
+                </div>
+
+            </div>
+        </div>
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

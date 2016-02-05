@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="posts_list">
+        <div class="list_head">
+
+        </div>
+
+        {% for post in pagination %}
+            <div class="post">
+                <div class="thumbnail">
+                    {% if post.image is not empty %}
+                    <img src="{{ post.image }}" alt="{{ post.title }}" height="100%" width="100%" />
+                    {% endif %}
+                </div>
+                <div class="entry">
+                    <div class="title">
+                        <a href="{{ post.url }}">{{ post.title }} </a><span class="domain">({{ post.host }})</span>
+                    </div>
+                    <div class="submitted">
+                        Submitted 1 hour ago by Joost
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        {# display navigation #}
+        <div class="navigation">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    </div>
+
+{% endblock %}
+
