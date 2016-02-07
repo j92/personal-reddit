@@ -8,12 +8,22 @@
 
 namespace AppBundle\EventListener;
 
+use Cloudinary;
+use Cloudinary\Uploader;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use AppBundle\Entity\Post;
 use Embedly\Embedly;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PostSaver
 {
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
     public function postPersist(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
@@ -25,16 +35,51 @@ class PostSaver
 
         $entityManager = $args->getEntityManager();
 
+        $embed_config = $this->container->getParameter('embedly');
+
+        if ( empty($embed_config) ){
+            return;
+        }
+
         // First via embed API
         $api = new Embedly(array(
-            'key' => '17ba4297ae614c5f82c7f047286ae521',
-            'user_agent' => 'Mozilla/5.0 (compatible; mytestapp/1.0)'
+            'key' => $embed_config['key'],
+            'user_agent' => $embed_config['user_agent']
         ));
 
         // Request a thumbnail from Embed.ly api
         $meta = $this->getMetaData($api, $entity->getUrl());
 
         $entity->setImage($meta['thumbnail']);
+
+        if (!empty($meta['thumbnail'])) {
+
+            $cloud_config = $this->container->getParameter('cloudinary');
+
+            if (isset($cloud_config) &&
+                !empty($cloud_config['cloud_name']) &&
+                !empty($cloud_config['api_key']) &&
+                !empty($cloud_config['api_secret'] )
+            ) {
+                // download and copy to cdn
+                Cloudinary::config(array(
+                    'cloud_name' => $cloud_config['cloud_name'],
+                    'api_key' => $cloud_config['api_key'],
+                    'api_secret' => $cloud_config['api_secret']
+                ));
+
+                $result = Uploader::upload(
+                    $meta['thumbnail'], array(
+                        "crop" => "limit", "width" => "100", "height" => "100"
+                    )
+                );
+
+                if (isset($result['url'])) {
+                    $entity->setImage($result['url']);
+                }
+            }
+
+        }
 
         if (empty($entity->getTitle())) {
             $entity->setTitle($meta['title']);
