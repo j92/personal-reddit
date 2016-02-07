@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Carbon\Carbon;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -51,6 +52,12 @@ class Post
      * @ORM\Column(name="host", type="string", length=255, nullable=true)
      */
     private $host;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    protected $user;
 
     /**
      * @var DateTime
@@ -163,6 +170,22 @@ class Post
     }
 
     /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param mixed $user
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+    /**
      * Set createdAt
      *
      * @param DateTime $createdAt
@@ -179,11 +202,11 @@ class Post
     /**
      * Get createdAt
      *
-     * @return DateTime
+     * @return Carbon
      */
     public function getCreatedAt()
     {
-        return $this->createdAt;
+        return Carbon::instance($this->createdAt);
     }
 
     /**
@@ -203,11 +226,11 @@ class Post
     /**
      * Get updatedAt
      *
-     * @return DateTime
+     * @return Carbon
      */
     public function getUpdatedAt()
     {
-        return $this->updatedAt;
+        return Carbon::instance($this->updatedAt);
     }
 }
 

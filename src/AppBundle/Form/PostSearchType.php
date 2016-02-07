@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PostType extends AbstractType
+class PostSearchType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -15,8 +15,7 @@ class PostType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('url')
-            ->add('title')
+            ->add('search')
         ;
     }
     
@@ -26,10 +25,9 @@ class PostType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Post',
-            'csrf_protection' => true,
+            'csrf_protection' => false,
             // a unique key to help generate the secret token
-            'csrf_token_id' => 'post_item',
+            'csrf_token_id' => 'post_search_item',
         ));
     }
 }

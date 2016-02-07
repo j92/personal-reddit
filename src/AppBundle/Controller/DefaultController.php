@@ -16,10 +16,24 @@ class DefaultController extends Controller
     {
         $post = new Post();
         $form = $this->createForm('AppBundle\Form\PostType', $post);
+        $searchform = $this->createForm('AppBundle\Form\PostSearchType');
+        $searchform->handleRequest($request);
 
         $em = $this->getDoctrine()->getManager();
 
-        $posts = $em->getRepository('AppBundle:Post')->findAll();
+        // Search?
+        if ($request->get('post_search')) {
+            $search = $request->get('post_search');
+
+            $posts = $em->getRepository('AppBundle:Post')
+                ->createQueryBuilder('p')
+                ->where('p.title LIKE :search')
+                ->setParameter('search', '%'.$search['search'].'%')
+                ->getQuery()
+                ->getResult();
+        } else {
+            $posts = $em->getRepository('AppBundle:Post')->findAll();
+        }
 
         $paginator  = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
@@ -31,8 +45,10 @@ class DefaultController extends Controller
         // replace this example code with whatever you need
         return $this->render('default/index.html.twig', [
             'post' => $post,
+            'searchform' => $searchform->createView(),
             'form' => $form->createView(),
             'pagination' => $pagination,
         ]);
     }
+
 }

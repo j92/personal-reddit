@@ -54,15 +54,32 @@ class PostSaver
 
         $objs = $api->oembed($url);
 
-        if (isset($objs->thumbnail_url) && !empty($objs->thumbnail_url)) {
+        if (!empty($objs->thumbnail_url)) {
             $meta['thumbnail'] = $objs->thumbnail_url;
         }
 
-        if (isset($objs->title) && !empty($objs->title)) {
+        if (!empty($objs->title)) {
             $meta['title'] = $objs->title;
         }
+//
+//        if (empty($meta['thumbnail']) || empty($meta['thumbnail'])) {
+//            $objs = $api->extract(array(
+//                'urls' => array(
+//                    $url
+//                )
+//            ));
+//
+//            if (isset($objs->thumbnail_url) && !empty($objs->thumbnail_url)) {
+//                $meta['thumbnail'] = $objs->thumbnail_url;
+//            }
+//
+//            if (isset($objs->title) && !empty($objs->title)) {
+//                $meta['title'] = $objs->title;
+//            }
+//        }
 
-        // @TODO Second try via extract API
+
+
         return $meta;
 
     }

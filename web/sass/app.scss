@@ -18,6 +18,10 @@ a {
     color: #2ba6cb;
 }
 
+strong, b {
+    font-weight: bold;
+}
+
 .topbar {
     background-color: black;
     color: #ffffff;
@@ -79,6 +83,7 @@ a {
             .entry {
                 display: inline-block;
                 margin: 4px;
+                width: 70%;
 
                 .title {
                     margin-bottom: 4px;
@@ -131,5 +136,20 @@ a {
             cursor: pointer;
         }
 
+    }
+
+    label {
+        display: block;
+        margin-bottom: 4px;
+        width: 100%;
+    }
+
+    .form-group {
+        margin-bottom: 4px;
+
+        input {
+            font-size: 16px;
+            height: 30px;
+        }
     }
 }

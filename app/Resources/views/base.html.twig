@@ -17,34 +17,65 @@
         <div class="container">
             <div class="topbar">
                 <div class="left">
-                    <a href="{{ path('homepage') }}"><h1>Personal Reddit</h1></a>
+                    <a href="{{ path('homepage') }}">
+                        <h1>Personal Reddit</h1>
+                    </a>
                 </div>
                 <div class="right">
-                    <span>Ingelogd als: joostvdriel@gmail.com</span>
+                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                        {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+                        <a href="{{ path('fos_user_security_logout') }}">
+                            {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                        </a>
+                    {% else %}
+                        <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+                    {% endif %}
                 </div>
             </div>
-            <div class="flashes"></div>
+            <div class="flashes">
+                {% if app.request.hasPreviousSession %}
+                    {% for type, messages in app.session.flashbag.all() %}
+                        {% for message in messages %}
+                            <div class="flash-{{ type }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            </div>
             <div class="content">
                 <div class="posts">
                     {% block body %}{% endblock %}
                 </div>
 
                 <div class="form">
-                {% if form is defined  %}
-                    {{ form_start(form, {'action' : path('post_new')}) }}
-                    <div class="form-group">
-                        {{ form_errors(form.url) }}
-                        {{ form_widget(form.url, { 'attr': {'class': 'input', 'placeholder': 'Url'} }) }}
-                    </div>
-                    <div class="form-group">
-                        {{ form_errors(form.title) }}
-                        {{ form_widget(form.title, { 'attr': {'class': 'input', 'placeholder': 'Title'} }) }}
-                    </div>
-                    <input type="submit" value="Post a new link" />
-                    {{ form_end(form) }}
-                {% endif %}
+                    {% if searchform is defined  %}
+                        {{ form_start(searchform, {'action' : path('homepage'), 'method' : 'get'}) }}
+                        <div class="form-group">
+                            {{ form_errors(searchform.search) }}
+                            {{ form_widget(searchform.search, { 'attr': {'class': 'input', 'placeholder': 'search'|trans} }) }}
+                        </div>
+                        <input type="submit" value="{{ 'search'|trans }}" />
+                        {{ form_end(searchform) }}
+                    {% endif %}
                 </div>
-
+                <div class="form">
+                    {% if is_granted("ROLE_USER") %}
+                        {% if form is defined  %}
+                            {{ form_start(form, {'action' : path('post_new')}) }}
+                            <div class="form-group">
+                                {{ form_errors(form.url) }}
+                                {{ form_widget(form.url, { 'attr': {'class': 'input', 'placeholder': 'Url'} }) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_errors(form.title) }}
+                                {{ form_widget(form.title, { 'attr': {'class': 'input', 'placeholder': 'Title'} }) }}
+                            </div>
+                            <input type="submit" value="{{ 'post.new_link'|trans }}" />
+                            {{ form_end(form) }}
+                        {% endif %}
+                    {% endif %}
+                </div>
             </div>
         </div>
         {% block javascripts %}{% endblock %}
