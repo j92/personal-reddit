@@ -8,8 +8,6 @@
 
 namespace AppBundle\EventListener;
 
-use Cloudinary;
-use Cloudinary\Uploader;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use AppBundle\Entity\Post;
 use Embedly\Embedly;
@@ -62,13 +60,13 @@ class PostSaver
                 !empty($cloud_config['api_secret'] )
             ) {
                 // download and copy to cdn
-                Cloudinary::config(array(
+                \Cloudinary::config(array(
                     'cloud_name' => $cloud_config['cloud_name'],
                     'api_key' => $cloud_config['api_key'],
                     'api_secret' => $cloud_config['api_secret']
                 ));
 
-                $result = Uploader::upload(
+                $result = \Cloudinary\Uploader::upload(
                     $meta['thumbnail'], array(
                         "crop" => "limit", "width" => "100", "height" => "100"
                     )
