@@ -17,3 +17,12 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    cloudinary:
+        cloud_name: ~
+        api_key: ~
+        api_secret: ~
+
+    embedly:
+        key: ~
+        user_agent: ~
